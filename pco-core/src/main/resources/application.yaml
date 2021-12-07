@@ -43,5 +43,5 @@ logging:
   level:
     org:
       hibernate:
-        type: trace
-    root: trace
+        type: debug
+    root: debug

@@ -1,31 +1,26 @@
 package kr.pco.service.Impl;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
 import javax.persistence.EntityManager;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.http.HttpStatus;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import kr.pco.core.domain.PcoEntity;
+import kr.pco.core.domain.ProductEntity;
 import kr.pco.core.dto.FindMember;
-import kr.pco.core.exception.PcoException;
 import kr.pco.repo.MemberRepository;
 import kr.pco.service.MemberService;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 public class MemberServiceImpl implements MemberService {
-	
+
 	@Autowired
 	private MemberRepository repository;
+
+	@Autowired
+	EntityManager em;
+
+	public static int count = 0;
 
 	@Override
 	public void printBean() {
@@ -45,12 +40,28 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public void createProduct() {
-		repository.createProduct();
-		// TODO Auto-generated method stub
-		
+	public void changeProduct(Integer productSeq, String name) {
+		try {
+			count++;
+			repository.changeProduct(productSeq, name);
+
+		} catch (ObjectOptimisticLockingFailureException e) {
+			System.out.println("서비스값 : " + productSeq + "이름 " + name + "카운트  " + count);
+		}
+
 	}
 
-	
-	
+	@Override
+	public void createProduct() {
+
+		repository.createProduct();
+		// TODO Auto-generated method stub
+	}
+
+	@Override
+	public ProductEntity findProduct(Integer productSeq) {
+		// TODO Auto-generated method stub
+		return repository.findProductOne(productSeq);
+	}
+
 }
